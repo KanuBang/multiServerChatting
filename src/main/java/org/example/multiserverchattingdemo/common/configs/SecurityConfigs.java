@@ -24,6 +24,7 @@ import java.util.Arrays;
 public class SecurityConfigs {
 
     private final JwtAuthFilter jwtAuthFilter;
+
     @Bean
     public SecurityFilterChain myFilter(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -31,8 +32,8 @@ public class SecurityConfigs {
                 .csrf(AbstractHttpConfigurer::disable) //csrf 비활성화
                 .httpBasic(AbstractHttpConfigurer::disable) //Http Basic 비활성화
                 // 특정 url 패턴에 대해서는 Authentication 객체 요구하지 않음. (인증 처리 제외)
-                .authorizeHttpRequests(a -> a.requestMatchers("/member/create", "/member/doLogin", "/connect").permitAll().anyRequest().authenticated())
-                .sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션방식 사용 x
+                .authorizeHttpRequests(a -> a.requestMatchers("/member/create", "/member/doLogin", "/connect/**").permitAll().anyRequest().authenticated())
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션방식 사용 x
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
@@ -51,7 +52,7 @@ public class SecurityConfigs {
     }
 
     @Bean
-    public PasswordEncoder makePassword(){
+    public PasswordEncoder makePassword() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 }
